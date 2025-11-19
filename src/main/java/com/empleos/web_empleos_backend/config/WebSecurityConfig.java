@@ -29,7 +29,9 @@ public class WebSecurityConfig {
                 ).permitAll()
                 .anyRequest().authenticated()
             )
-            // Aquí deberías agregar tu filtro JWT personalizado
+            .oauth2ResourceServer(oauth2 -> oauth2
+                .jwt(Customizer.withDefaults())
+            )
             .sessionManagement(session -> session.disable());
         return http.build();
     }

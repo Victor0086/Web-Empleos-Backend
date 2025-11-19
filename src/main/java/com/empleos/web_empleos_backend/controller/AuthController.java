@@ -50,4 +50,19 @@ public class AuthController {
                 return ResponseEntity.badRequest().body(error);
             });
     }
+
+    @GetMapping("/user")
+    public ResponseEntity<?> getUserByEmail(@RequestParam String email) {
+        return usuarioService.buscarPorEmail(email)
+            .map(usuario -> {
+                Map<String, Object> response = new HashMap<>();
+                response.put("usuario", usuario);
+                return ResponseEntity.ok(response);
+            })
+            .orElseGet(() -> {
+                Map<String, Object> error = new HashMap<>();
+                error.put("error", "Usuario no encontrado");
+                return ResponseEntity.ok(error); // No error 404, para que el frontend muestre el formulario
+            });
+    }
 }

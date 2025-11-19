@@ -25,4 +25,8 @@ public class UsuarioService {
         // Aquí solo se puede buscar el usuario por email
         return usuarioRepository.findByEmail(email);
     }
+
+    public Optional<Usuario> buscarPorEmail(String email) {
+        return usuarioRepository.findByEmail(email);
+    }
 }
