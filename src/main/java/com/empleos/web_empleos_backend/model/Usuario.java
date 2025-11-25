@@ -37,7 +37,7 @@ public class Usuario {
     private String nacionalidad;
 
     @Column(name = "nacimiento")
-    private String nacimiento;
+    private Date nacimiento;
 
     @Column(name = "genero")
     private String genero;

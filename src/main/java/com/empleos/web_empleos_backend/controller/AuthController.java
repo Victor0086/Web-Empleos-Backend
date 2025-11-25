@@ -98,6 +98,14 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("perfil", perfilDTO));
     }
 
+    @GetMapping("/perfil")
+    public ResponseEntity<Map<String, Object>> getPerfilByEmail(@RequestParam String email) {
+        return usuarioService.buscarPorEmail(email)
+            .map(usuario -> ResponseEntity.ok(Map.of("usuario", (Object) usuario)))
+            .orElseGet(() -> ResponseEntity.ok(Map.of("error", "Usuario no encontrado")));
+    }
+    
+
     @PostMapping("/sync")
     public ResponseEntity<?> syncUser(@RequestBody Usuario usuario) {
         System.out.println("Recibido usuario para sincronizar: " + usuario);

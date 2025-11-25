@@ -1,9 +1,11 @@
 package com.empleos.web_empleos_backend.service;
 
 import com.empleos.web_empleos_backend.model.Usuario;
+import com.empleos.web_empleos_backend.model.Contacto;
 import com.empleos.web_empleos_backend.model.Estudio;
 import com.empleos.web_empleos_backend.model.Experiencia;
 import com.empleos.web_empleos_backend.dto.PerfilDTO;
+import com.empleos.web_empleos_backend.dto.ContactoDTO;
 import com.empleos.web_empleos_backend.dto.EstudioDTO;
 import com.empleos.web_empleos_backend.dto.ExperienciaDTO;
 import com.empleos.web_empleos_backend.repository.UsuarioRepository;
@@ -43,7 +45,7 @@ public class UsuarioService {
             if (usuario.getDescripcion() != null) user.setDescripcion(usuario.getDescripcion());
             if (usuario.getHabilidades() != null) user.setHabilidades(usuario.getHabilidades());
             if (usuario.getCvAdjunto() != null) user.setCvAdjunto(usuario.getCvAdjunto());
-            // Puedes agregar más campos según tu modelo
+            
             return usuarioRepository.save(user);
         } else {
             return usuarioRepository.save(usuario);
@@ -103,8 +105,42 @@ public class UsuarioService {
     public Usuario actualizarPerfilPorEmail(String email, PerfilDTO perfilDTO) {
         Usuario usuario = usuarioRepository.findByEmail(email).orElse(null);
         if (usuario == null) return null;
-        usuario.setDescripcion(perfilDTO.getDescripcion());
-        usuario.setHabilidades(perfilDTO.getHabilidades());
+
+        if (perfilDTO.getNombreCompleto() != null && !perfilDTO.getNombreCompleto().isEmpty())
+            usuario.setNombreCompleto(perfilDTO.getNombreCompleto());
+        if (perfilDTO.getRol() != null && !perfilDTO.getRol().isEmpty())
+            usuario.setRol(perfilDTO.getRol());
+        if (perfilDTO.getFotoUrl() != null && !perfilDTO.getFotoUrl().isEmpty())
+            usuario.setFotoUrl(perfilDTO.getFotoUrl());
+        if (perfilDTO.getNacionalidad() != null && !perfilDTO.getNacionalidad().isEmpty())
+            usuario.setNacionalidad(perfilDTO.getNacionalidad());
+        if (perfilDTO.getNacimiento() != null)
+            usuario.setNacimiento(perfilDTO.getNacimiento());
+        if (perfilDTO.getGenero() != null && !perfilDTO.getGenero().isEmpty())
+            usuario.setGenero(perfilDTO.getGenero());
+        if (perfilDTO.getEstadoCivil() != null && !perfilDTO.getEstadoCivil().isEmpty())
+            usuario.setEstadoCivil(perfilDTO.getEstadoCivil());
+        if (perfilDTO.getLicencia() != null && !perfilDTO.getLicencia().isEmpty())
+            usuario.setLicencia(perfilDTO.getLicencia());
+
+        // Mapeo de contacto solo si viene
+        if (perfilDTO.getContacto() != null) {
+            ContactoDTO c = perfilDTO.getContacto();
+            Contacto contacto = usuario.getContacto() != null ? usuario.getContacto() : new Contacto();
+            if (c.getCelular() != null && !c.getCelular().isEmpty()) contacto.setCelular(c.getCelular());
+            if (c.getTelefono() != null && !c.getTelefono().isEmpty()) contacto.setTelefono(c.getTelefono());
+            if (c.getEmail() != null && !c.getEmail().isEmpty()) contacto.setEmail(c.getEmail());
+            if (c.getDireccion() != null && !c.getDireccion().isEmpty()) contacto.setDireccion(c.getDireccion());
+            usuario.setContacto(contacto);
+        }
+
+        if (perfilDTO.getDescripcion() != null && !perfilDTO.getDescripcion().isEmpty())
+            usuario.setDescripcion(perfilDTO.getDescripcion());
+        if (perfilDTO.getHabilidades() != null && !perfilDTO.getHabilidades().isEmpty())
+            usuario.setHabilidades(perfilDTO.getHabilidades());
+        if (perfilDTO.getCvAdjunto() != null && !perfilDTO.getCvAdjunto().isEmpty())
+            usuario.setCvAdjunto(perfilDTO.getCvAdjunto());
+
         guardar(usuario);
         return usuario;
     }
