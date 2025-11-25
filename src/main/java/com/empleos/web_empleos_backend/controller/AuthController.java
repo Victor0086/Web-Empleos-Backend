@@ -1,5 +1,10 @@
 package com.empleos.web_empleos_backend.controller;
 
+import com.empleos.web_empleos_backend.dto.EstudioDTO;
+import com.empleos.web_empleos_backend.dto.ExperienciaDTO;
+import com.empleos.web_empleos_backend.dto.PerfilDTO;
+import com.empleos.web_empleos_backend.model.Estudio;
+import com.empleos.web_empleos_backend.model.Experiencia;
 import com.empleos.web_empleos_backend.model.Usuario;
 import com.empleos.web_empleos_backend.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +15,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "*")
 public class AuthController {
     @Autowired
     private UsuarioService usuarioService;
@@ -64,5 +68,46 @@ public class AuthController {
                 error.put("error", "Usuario no encontrado");
                 return ResponseEntity.ok(error); // No error 404, para que el frontend muestre el formulario
             });
+    }
+
+
+    @PutMapping("/educacion")
+    public ResponseEntity<?> actualizarEducacion(@RequestParam String userId, @RequestBody EstudioDTO estudioDTO) {
+        Estudio estudio = usuarioService.agregarEstudio(userId, estudioDTO);
+        if (estudio == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Usuario no encontrado"));
+        }
+        return ResponseEntity.ok(Map.of("educacion", estudio));
+    }
+
+    @PutMapping("/experiencia")
+    public ResponseEntity<?> actualizarExperiencia(@RequestParam String userId, @RequestBody ExperienciaDTO experienciaDTO) {
+        Experiencia experiencia = usuarioService.agregarExperiencia(userId, experienciaDTO);
+        if (experiencia == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Usuario no encontrado"));
+        }
+        return ResponseEntity.ok(Map.of("experiencia", experiencia));
+    }
+
+    @PutMapping("/perfil")
+    public ResponseEntity<?> actualizarPerfil(@RequestParam String email, @RequestBody PerfilDTO perfilDTO) {
+        Usuario usuario = usuarioService.actualizarPerfilPorEmail(email, perfilDTO);
+        if (usuario == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Usuario no encontrado"));
+        }
+        return ResponseEntity.ok(Map.of("perfil", perfilDTO));
+    }
+
+    @PostMapping("/sync")
+    public ResponseEntity<?> syncUser(@RequestBody Usuario usuario) {
+        System.out.println("Recibido usuario para sincronizar: " + usuario);
+        try {
+            Usuario usuarioActualizado = usuarioService.registrarUsuario(usuario);
+            System.out.println("Usuario sincronizado correctamente: " + usuarioActualizado);
+            return ResponseEntity.ok(Map.of("usuario", usuarioActualizado));
+        } catch (Exception e) {
+            e.printStackTrace(); // Esto mostrará el error exacto en la consola del backend
+            return ResponseEntity.status(500).body(Map.of("error", e.getMessage())); // Esto enviará el mensaje al frontend
+        }
     }
 }
