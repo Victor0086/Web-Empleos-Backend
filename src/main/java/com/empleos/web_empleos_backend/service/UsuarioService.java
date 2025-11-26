@@ -70,8 +70,17 @@ public class UsuarioService {
 
     // Actualizar educación
     public Estudio agregarEstudio(String userId, EstudioDTO estudioDTO) {
+        System.out.println("[agregarEstudio] userId recibido: " + userId);
         Usuario usuario = buscarPorId(userId);
-        if (usuario == null) return null;
+        if (usuario == null) {
+            System.out.println("[agregarEstudio] Usuario no encontrado para userId: " + userId);
+            return null;
+        }
+        if (usuario.getEstudios() == null) {
+            usuario.setEstudios(new java.util.ArrayList<>());
+            System.out.println("[agregarEstudio] Inicializando lista de estudios para usuario: " + userId);
+        }
+        // ...existing code...
         Estudio estudio = new Estudio();
         estudio.setTitulo(estudioDTO.getTitulo());
         estudio.setInstitucion(estudioDTO.getInstitucion());
@@ -81,6 +90,7 @@ public class UsuarioService {
         estudio.setFechaFin(estudioDTO.getFechaFin());
         estudio.setReferencia(estudioDTO.getReferencia());
         estudio.setCertificado(estudioDTO.getCertificado());
+        estudio.setUsuario(usuario); // Asociar usuario al estudio
         usuario.getEstudios().add(estudio);
         guardar(usuario);
         return estudio;
@@ -96,6 +106,7 @@ public class UsuarioService {
         experiencia.setFechaInicio(experienciaDTO.getFechaInicio());
         experiencia.setFechaFin(experienciaDTO.getFechaFin());
         experiencia.setDescripcion(experienciaDTO.getDescripcion());
+        experiencia.setUsuario(usuario);
         usuario.getExperiencias().add(experiencia);
         guardar(usuario);
         return experiencia;

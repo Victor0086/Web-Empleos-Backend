@@ -25,4 +25,15 @@ public class Estudio {
     private String fechaFin;
     private String referencia;
     private Boolean certificado;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
+    // Getter y Setter para usuario
+    public Usuario getUsuario() {
+        return usuario;
+    }
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
 }

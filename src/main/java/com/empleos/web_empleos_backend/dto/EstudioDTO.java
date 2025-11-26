@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EstudioDTO {
+    private String userId;
     private String titulo;
     private String institucion;
     private String tipo;

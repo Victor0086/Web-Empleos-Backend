@@ -3,6 +3,7 @@ package com.empleos.web_empleos_backend.controller;
 import com.empleos.web_empleos_backend.dto.EstudioDTO;
 import com.empleos.web_empleos_backend.dto.ExperienciaDTO;
 import com.empleos.web_empleos_backend.dto.PerfilDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.empleos.web_empleos_backend.model.Estudio;
 import com.empleos.web_empleos_backend.model.Experiencia;
 import com.empleos.web_empleos_backend.model.Usuario;
@@ -72,7 +73,14 @@ public class AuthController {
 
 
     @PutMapping("/educacion")
-    public ResponseEntity<?> actualizarEducacion(@RequestParam String userId, @RequestBody EstudioDTO estudioDTO) {
+    public ResponseEntity<?> actualizarEducacion(@RequestParam(required = false) String userId, @RequestBody EstudioDTO estudioDTO) {
+        // Si no viene como query param, tomarlo del body
+        if (userId == null || userId.isEmpty()) {
+            userId = estudioDTO.getUserId();
+        }
+        if (userId == null || userId.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Falta el userId"));
+        }
         Estudio estudio = usuarioService.agregarEstudio(userId, estudioDTO);
         if (estudio == null) {
             return ResponseEntity.badRequest().body(Map.of("error", "Usuario no encontrado"));
@@ -80,13 +88,73 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("educacion", estudio));
     }
 
+    @SuppressWarnings("unchecked")
     @PutMapping("/experiencia")
-    public ResponseEntity<?> actualizarExperiencia(@RequestParam String userId, @RequestBody ExperienciaDTO experienciaDTO) {
-        Experiencia experiencia = usuarioService.agregarExperiencia(userId, experienciaDTO);
-        if (experiencia == null) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Usuario no encontrado"));
+    public ResponseEntity<?> actualizarExperiencia(@RequestParam(required = false) String userId, @RequestBody Object body) {
+        ObjectMapper mapper = new ObjectMapper();
+        // Si es un array, procesar cada experiencia
+        if (body instanceof java.util.List) {
+            java.util.List<?> experienciasList = (java.util.List<?>) body;
+            java.util.List<Object> resultados = new java.util.ArrayList<>();
+            for (Object obj : experienciasList) {
+                if (!(obj instanceof java.util.Map)) {
+                    resultados.add(Map.of("error", "Cada experiencia debe ser un objeto JSON", "data", obj));
+                    continue;
+                }
+                java.util.Map<String, Object> experienciaMap = (java.util.Map<String, Object>) obj;
+                String uid = userId;
+                if (uid == null) {
+                    Object userIdObj = experienciaMap.get("userId");
+                    if (userIdObj != null) {
+                        uid = userIdObj.toString();
+                        experienciaMap.remove("userId");
+                    }
+                }
+                if (uid == null) {
+                    resultados.add(Map.of(
+                        "error", "Falta el campo 'userId' en este objeto de experiencia. Debes incluirlo en cada objeto o como query param.",
+                        "data", experienciaMap
+                    ));
+                    continue;
+                }
+                try {
+                    ExperienciaDTO experienciaDTO = mapper.convertValue(experienciaMap, ExperienciaDTO.class);
+                    Experiencia experiencia = usuarioService.agregarExperiencia(uid, experienciaDTO);
+                    if (experiencia == null) {
+                        resultados.add(Map.of("error", "Usuario no encontrado", "data", experienciaMap));
+                    } else {
+                        resultados.add(Map.of("experiencia", experiencia));
+                    }
+                } catch (Exception e) {
+                    resultados.add(Map.of("error", "Formato de experiencia inválido", "data", experienciaMap));
+                }
+            }
+            return ResponseEntity.ok(resultados);
+        } else if (body instanceof java.util.Map) {
+            java.util.Map<String, Object> experienciaMap = (java.util.Map<String, Object>) body;
+            if (userId == null) {
+                Object userIdObj = experienciaMap.get("userId");
+                if (userIdObj != null) {
+                    userId = userIdObj.toString();
+                    experienciaMap.remove("userId");
+                }
+            }
+            if (userId == null) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Falta el parámetro userId"));
+            }
+            try {
+                ExperienciaDTO experienciaDTO = mapper.convertValue(experienciaMap, ExperienciaDTO.class);
+                Experiencia experiencia = usuarioService.agregarExperiencia(userId, experienciaDTO);
+                if (experiencia == null) {
+                    return ResponseEntity.badRequest().body(Map.of("error", "Usuario no encontrado"));
+                }
+                return ResponseEntity.ok(Map.of("experiencia", experiencia));
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Formato de experiencia inválido"));
+            }
+        } else {
+            return ResponseEntity.badRequest().body(Map.of("error", "Formato de body inválido"));
         }
-        return ResponseEntity.ok(Map.of("experiencia", experiencia));
     }
 
     @PutMapping("/perfil")
