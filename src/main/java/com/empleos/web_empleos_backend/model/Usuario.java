@@ -70,4 +70,29 @@ public class Usuario {
 
     @Column(name = "cv_adjunto")
     private String cvAdjunto;
+
+    @Column(name = "resumen_profesional")
+    private String resumenProfesional;
+    @Override
+    public String toString() {
+        return "Usuario{" +
+                "userId='" + userId + '\'' +
+                ", email='" + email + '\'' +
+                ", nombreCompleto='" + nombreCompleto + '\'' +
+                ", rol='" + rol + '\'' +
+                ", fechaCreacion=" + fechaCreacion +
+                ", fotoUrl='" + fotoUrl + '\'' +
+                ", nacionalidad='" + nacionalidad + '\'' +
+                ", nacimiento=" + nacimiento +
+                ", genero='" + genero + '\'' +
+                ", estadoCivil='" + estadoCivil + '\'' +
+                ", licencia='" + licencia + '\'' +
+                ", contacto=" + contacto +
+                ", estudiosCount=" + (estudios != null ? estudios.size() : 0) +
+                ", experienciasCount=" + (experiencias != null ? experiencias.size() : 0) +
+                ", descripcion='" + descripcion + '\'' +
+                ", habilidades='" + habilidades + '\'' +
+                ", cvAdjunto='" + cvAdjunto + '\'' +
+                '}';
+    }
 }

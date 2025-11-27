@@ -152,6 +152,11 @@ public class UsuarioService {
         if (perfilDTO.getCvAdjunto() != null && !perfilDTO.getCvAdjunto().isEmpty())
             usuario.setCvAdjunto(perfilDTO.getCvAdjunto());
 
+        // Guardar resumen profesional si viene
+        if (perfilDTO.getResumenProfesional() != null && !perfilDTO.getResumenProfesional().isEmpty()) {
+            usuario.setResumenProfesional(perfilDTO.getResumenProfesional());
+        }
+
         guardar(usuario);
         return usuario;
     }

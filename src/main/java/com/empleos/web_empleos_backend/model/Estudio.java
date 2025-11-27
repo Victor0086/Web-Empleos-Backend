@@ -28,6 +28,7 @@ public class Estudio {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Usuario usuario;
     // Getter y Setter para usuario
     public Usuario getUsuario() {
@@ -35,5 +36,20 @@ public class Estudio {
     }
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
+    }
+    @Override
+    public String toString() {
+        return "Estudio{" +
+                "id=" + id +
+                ", titulo='" + titulo + '\'' +
+                ", institucion='" + institucion + '\'' +
+                ", tipo='" + tipo + '\'' +
+                ", estado='" + estado + '\'' +
+                ", fechainicio='" + fechainicio + '\'' +
+                ", fechaFin='" + fechaFin + '\'' +
+                ", referencia='" + referencia + '\'' +
+                ", certificado=" + certificado +
+                ", usuarioId=" + (usuario != null ? usuario.getUserId() : null) +
+                '}';
     }
 }

@@ -29,4 +29,5 @@ public class PerfilDTO {
     private String descripcion;
     private String habilidades;
     private String cvAdjunto;
+    private String resumenProfesional;
 }
