@@ -155,6 +155,7 @@ public class UsuarioService {
         // Guardar resumen profesional si viene
         if (perfilDTO.getResumenProfesional() != null && !perfilDTO.getResumenProfesional().isEmpty()) {
             usuario.setResumenProfesional(perfilDTO.getResumenProfesional());
+            
         }
 
         guardar(usuario);
