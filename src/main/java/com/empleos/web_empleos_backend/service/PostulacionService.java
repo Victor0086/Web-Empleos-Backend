@@ -12,8 +12,13 @@ public class PostulacionService {
     @Autowired
     private PostulacionRepository postulacionRepository;
 
+
     public List<Postulacion> findAll() {
         return postulacionRepository.findAll();
+    }
+
+    public List<Postulacion> findByEmail(String email) {
+        return postulacionRepository.findByUsuarioEmail(email);
     }
 
     public Optional<Postulacion> findById(Long id) {

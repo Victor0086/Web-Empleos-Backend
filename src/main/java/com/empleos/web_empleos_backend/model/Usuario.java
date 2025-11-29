@@ -26,8 +26,9 @@ public class Usuario {
     @Column(name = "nombre_completo", nullable = true)
     private String nombreCompleto;
 
-    @Column(name = "rol")
-    private String rol;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "rol_id")
+    private Role rol;
 
     @Column(name = "fecha_creacion")
     private Date fechaCreacion;

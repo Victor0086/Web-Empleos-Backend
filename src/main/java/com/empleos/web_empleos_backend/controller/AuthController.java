@@ -169,8 +169,41 @@ public class AuthController {
     @GetMapping("/perfil")
     public ResponseEntity<Map<String, Object>> getPerfilByEmail(@RequestParam String email) {
         return usuarioService.buscarPorEmail(email)
-            .map(usuario -> ResponseEntity.ok(Map.of("usuario", (Object) usuario)))
-            .orElseGet(() -> ResponseEntity.ok(Map.of("error", "Usuario no encontrado")));
+            .map(usuario -> {
+                Map<String, Object> response = new HashMap<>();
+                Map<String, Object> usuarioMap = new HashMap<>();
+                usuarioMap.put("userId", usuario.getUserId());
+                usuarioMap.put("email", usuario.getEmail());
+                usuarioMap.put("nombreCompleto", usuario.getNombreCompleto());
+                usuarioMap.put("fotoUrl", usuario.getFotoUrl());
+                usuarioMap.put("nacionalidad", usuario.getNacionalidad());
+                usuarioMap.put("nacimiento", usuario.getNacimiento());
+                usuarioMap.put("genero", usuario.getGenero());
+                usuarioMap.put("estadoCivil", usuario.getEstadoCivil());
+                usuarioMap.put("licencia", usuario.getLicencia());
+                usuarioMap.put("contacto", usuario.getContacto());
+                usuarioMap.put("descripcion", usuario.getDescripcion());
+                usuarioMap.put("habilidades", usuario.getHabilidades());
+                usuarioMap.put("cvAdjunto", usuario.getCvAdjunto());
+                usuarioMap.put("resumenProfesional", usuario.getResumenProfesional());
+                usuarioMap.put("estudios", usuario.getEstudios());
+                usuarioMap.put("experiencias", usuario.getExperiencias());
+                // Agregar rol_id y rol (nombre)
+                if (usuario.getRol() != null) {
+                    usuarioMap.put("rol_id", usuario.getRol().getId());
+                    usuarioMap.put("rol", usuario.getRol().getNombre());
+                } else {
+                    usuarioMap.put("rol_id", null);
+                    usuarioMap.put("rol", null);
+                }
+                response.put("usuario", usuarioMap);
+                return ResponseEntity.ok(response);
+            })
+            .orElseGet(() -> {
+                Map<String, Object> errorMap = new HashMap<>();
+                errorMap.put("error", "Usuario no encontrado");
+                return ResponseEntity.ok(errorMap);
+            });
     }
     
 

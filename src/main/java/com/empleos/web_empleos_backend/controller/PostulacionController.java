@@ -6,12 +6,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/postulaciones")
 public class PostulacionController {
     @Autowired
     private PostulacionService postulacionService;
+
+    @Autowired
+    private com.empleos.web_empleos_backend.service.JwtService jwtService;
+
+    // Endpoint seguro: obtiene el email del usuario autenticado vía JWT
+    @GetMapping(params = "email")
+    public ResponseEntity<?> getByEmail(@RequestHeader("Authorization") String authorizationHeader) {
+        String token = authorizationHeader.replace("Bearer ", "");
+        String email = jwtService.extractEmail(token);
+        // Buscar postulaciones por email
+        var postulaciones = postulacionService.findByEmail(email);
+        return ResponseEntity.ok().body(postulaciones);
+    }
 
     @GetMapping
     public List<Postulacion> getAll() {

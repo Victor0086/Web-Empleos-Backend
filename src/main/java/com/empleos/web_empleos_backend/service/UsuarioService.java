@@ -15,6 +15,8 @@ import java.util.Optional;
 
 @Service
 public class UsuarioService {
+        @Autowired
+        private com.empleos.web_empleos_backend.repository.RoleRepository roleRepository;
     @Autowired
     private UsuarioRepository usuarioRepository;
 
@@ -119,8 +121,10 @@ public class UsuarioService {
 
         if (perfilDTO.getNombreCompleto() != null && !perfilDTO.getNombreCompleto().isEmpty())
             usuario.setNombreCompleto(perfilDTO.getNombreCompleto());
-        if (perfilDTO.getRol() != null && !perfilDTO.getRol().isEmpty())
-            usuario.setRol(perfilDTO.getRol());
+        if (perfilDTO.getRol() != null && !perfilDTO.getRol().isEmpty()) {
+            com.empleos.web_empleos_backend.model.Role role = roleRepository.findByNombre(perfilDTO.getRol());
+            usuario.setRol(role);
+        }
         if (perfilDTO.getFotoUrl() != null && !perfilDTO.getFotoUrl().isEmpty())
             usuario.setFotoUrl(perfilDTO.getFotoUrl());
         if (perfilDTO.getNacionalidad() != null && !perfilDTO.getNacionalidad().isEmpty())
