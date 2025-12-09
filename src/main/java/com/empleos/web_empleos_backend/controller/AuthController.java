@@ -16,6 +16,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = {"http://localhost:4200", "https://web-empleos-front-gmeaa7c5eqctg4b2.eastus2-01.azurewebsites.net"})
 public class AuthController {
     @Autowired
     private UsuarioService usuarioService;

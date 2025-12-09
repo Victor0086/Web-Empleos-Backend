@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/ofertas")
+@CrossOrigin(origins = {"http://localhost:4200", "https://web-empleos-front-gmeaa7c5eqctg4b2.eastus2-01.azurewebsites.net"})
 public class OfertaController {
     @Autowired
     private OfertaService ofertaService;
@@ -16,6 +17,12 @@ public class OfertaController {
     @GetMapping
     public List<Oferta> getAll() {
         return ofertaService.findAll();
+    }
+    @PutMapping("/{id}/estado")
+    public ResponseEntity<Oferta> actualizarEstado(@PathVariable Long id, @RequestBody(required = true)  java.util.Map<String, String> body) {
+        String nuevoEstado = body.get("estado");
+        Oferta ofertaActualizada = ofertaService.actualizarEstado(id, nuevoEstado);
+        return ResponseEntity.ok(ofertaActualizada);
     }
 
     @GetMapping("/{id}")
@@ -34,5 +41,10 @@ public class OfertaController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         ofertaService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/empleador/{empleadorId}")
+    public List<Oferta> getByEmpleadorId(@PathVariable String empleadorId) {
+        return ofertaService.findByEmpleadorId(empleadorId);
     }
 }
