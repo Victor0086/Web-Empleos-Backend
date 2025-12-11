@@ -108,6 +108,34 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>com.microsoft.azure</groupId>
+				<artifactId>azure-webapp-maven-plugin</artifactId>
+				<version>2.13.0</version>
+				<configuration>
+					<schemaVersion>v2</schemaVersion>
+					<subscriptionId>TU-SUBSCRIPTION-ID</subscriptionId>
+					<resourceGroup>nombre-de-tu-grupo-recursos</resourceGroup>
+					<appName>nombre-de-tu-app-azure</appName>
+					<pricingTier>B1</pricingTier>
+					<region>eastus</region>
+					<runtime>
+						<os>linux</os>
+						<javaVersion>java 17</javaVersion>
+						<webContainer>Java SE</webContainer>
+					</runtime>
+					<deployment>
+						<resources>
+							<resource>
+								<directory>${project.basedir}/target</directory>
+								<includes>
+									<include>*.jar</include>
+								</includes>
+							</resource>
+						</resources>
+					</deployment>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
