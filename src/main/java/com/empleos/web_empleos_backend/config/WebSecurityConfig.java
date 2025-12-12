@@ -25,8 +25,11 @@ public class WebSecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                     "/api/auth/register",
-                    "/api/auth/login"
+                    "/api/auth/login",
+                    "/api/ofertas",
+                    "/uploads/**"
                 ).permitAll()
+                .requestMatchers("/api/auth/perfil").authenticated()
                 .anyRequest().authenticated()
             )
             .oauth2ResourceServer(oauth2 -> oauth2

@@ -17,6 +17,12 @@ public class OfertaController {
     public List<Oferta> getAll() {
         return ofertaService.findAll();
     }
+    @PutMapping("/{id}/estado")
+    public ResponseEntity<Oferta> actualizarEstado(@PathVariable Long id, @RequestBody(required = true)  java.util.Map<String, String> body) {
+        String nuevoEstado = body.get("estado");
+        Oferta ofertaActualizada = ofertaService.actualizarEstado(id, nuevoEstado);
+        return ResponseEntity.ok(ofertaActualizada);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Oferta> getById(@PathVariable Long id) {
@@ -34,5 +40,10 @@ public class OfertaController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         ofertaService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/empleador/{empleadorId}")
+    public List<Oferta> getByEmpleadorId(@PathVariable String empleadorId) {
+        return ofertaService.findByEmpleadorId(empleadorId);
     }
 }

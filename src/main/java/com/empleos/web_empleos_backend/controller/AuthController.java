@@ -19,8 +19,7 @@ import java.util.Map;
 public class AuthController {
     @Autowired
     private UsuarioService usuarioService;
-    @Autowired
-    private com.empleos.web_empleos_backend.service.JwtService jwtService;
+
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Usuario usuario) {
@@ -42,11 +41,9 @@ public class AuthController {
         String password = loginData.get("password");
         return usuarioService.login(email, password)
             .map(usuario -> {
-                String token = jwtService.generateToken(email);
                 Map<String, Object> response = new HashMap<>();
                 response.put("success", true);
                 response.put("usuario", usuario);
-                response.put("token", token);
                 return ResponseEntity.ok(response);
             })
             .orElseGet(() -> {

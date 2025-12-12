@@ -2,6 +2,7 @@ package com.empleos.web_empleos_backend.model;
 
 import jakarta.persistence.*;
 import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -15,7 +16,9 @@ public class Oferta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long oferta_id;
-    private String empleador_id;
+    @Column(name = "empleador_id")
+    @JsonProperty("empleador_id")
+    private String empleadorId;
     private String titulo;
     private String descripcion;
     private String contrato_type;
