@@ -54,12 +54,17 @@ public class ContratoController {
         
         // Agregar información de debug para cada contrato
         for (Contrato contrato : contratos) {
-            String trabajadorId = contrato.getPostulacion().getTrabajadorId();
-            String emailTrabajador = contrato.getPostulacion().getEmail();
-            System.out.println("[DEBUG] Contrato ID: " + contrato.getId() + 
-                             " - Trabajador: " + trabajadorId + 
-                             " - Email: " + emailTrabajador +
-                             " - Estado: " + contrato.getEstado());
+            if (contrato.getPostulacion() != null) {
+                String trabajadorId = contrato.getPostulacion().getTrabajadorId();
+                String emailTrabajador = contrato.getPostulacion().getEmail();
+                System.out.println("[DEBUG] Contrato ID: " + contrato.getId() + 
+                                 " - Trabajador: " + trabajadorId + 
+                                 " - Email: " + emailTrabajador +
+                                 " - Estado: " + contrato.getEstado());
+            } else {
+                System.out.println("[DEBUG] Contrato ID: " + contrato.getId() + 
+                                 " - Postulación: NULL - Estado: " + contrato.getEstado());
+            }
         }
         
         return ResponseEntity.ok(contratos);
