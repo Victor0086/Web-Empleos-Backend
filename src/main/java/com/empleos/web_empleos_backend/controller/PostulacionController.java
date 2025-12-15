@@ -2,6 +2,7 @@ package com.empleos.web_empleos_backend.controller;
 
 import com.empleos.web_empleos_backend.model.Postulacion;
 import com.empleos.web_empleos_backend.service.PostulacionService;
+import com.empleos.web_empleos_backend.service.UsuarioService;
 
 import java.io.IOException;
 
@@ -67,7 +68,7 @@ public class PostulacionController {
 
     // Nuevo endpoint para crear postulaciones con archivo
     @Autowired
-    private com.empleos.web_empleos_backend.service.UsuarioService usuarioService;
+    private UsuarioService usuarioService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> crearPostulacion(
