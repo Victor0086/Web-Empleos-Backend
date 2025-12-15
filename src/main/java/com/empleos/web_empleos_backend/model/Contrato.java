@@ -12,7 +12,7 @@ public class Contrato {
     @Column(name = "id_contrato")
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumns({
         @JoinColumn(name = "oferta_id", referencedColumnName = "oferta_id", nullable = false),
         @JoinColumn(name = "trabajador_id", referencedColumnName = "trabajador_id", nullable = false)

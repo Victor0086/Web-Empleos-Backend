@@ -88,6 +88,7 @@ public class ContratoController {
                         " - Trabajador: " + trabajadorId +
                         " - Email: " + emailTrabajador +
                         " - Estado: " + contrato.getEstado());
+                System.out.println("[DEBUG] JSON será enviado - trabajadorId: " + trabajadorId + ", ofertaId: " + contrato.getPostulacion().getOfertaId());
             } else {
                 System.out.println("[DEBUG] Contrato ID: " + contrato.getId() +
                         " - Postulación: NULL - Estado: " + contrato.getEstado());

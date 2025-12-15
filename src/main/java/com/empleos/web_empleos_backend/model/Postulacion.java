@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@com.fasterxml.jackson.annotation.JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Postulacion {
     @Id
     @Column(name = "oferta_id")
@@ -56,6 +57,7 @@ public class Postulacion {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Usuario usuario;
 
     @Column(name = "estado", nullable = false)
