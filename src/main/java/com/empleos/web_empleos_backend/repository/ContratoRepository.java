@@ -13,7 +13,10 @@ import java.util.Optional;
 
 @Repository
 public interface ContratoRepository extends JpaRepository<Contrato, Long> {
-    @Query("SELECT c FROM Contrato c WHERE c.postulacion.trabajadorId = :userId OR c.postulacion.ofertaId IN (SELECT o.oferta_id FROM Oferta o WHERE o.empleadorId = :userId) OR c.postulacion.email = :email")
+    @Query("SELECT DISTINCT c FROM Contrato c " +
+           "WHERE c.postulacion.trabajadorId = :userId " +
+           "OR c.postulacion.ofertaId IN (SELECT o.oferta_id FROM Oferta o WHERE o.empleadorId = :userId) " +
+           "OR c.postulacion.email = :email")
     List<Contrato> findContratosPorTrabajadorOEmpleadorOEmail(@Param("userId") String userId, @Param("email") String email);
     Optional<Contrato> findByPostulacion(Postulacion postulacion);
 

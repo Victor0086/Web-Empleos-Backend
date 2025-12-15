@@ -46,33 +46,30 @@ public class ContratoController {
         
         System.out.println("[DEBUG] idUsuario recibido en /mis-contratos: " + idUsuario);
         System.out.println("[DEBUG] email extraído del JWT: " + email);
+        
+        // Obtener contratos donde soy trabajador O empleador
         List<Contrato> contratos = contratoService.findContratosPorTrabajadorOEmpleadorOEmail(idUsuario, email);
+        
         System.out.println("[DEBUG] contratos encontrados: " + contratos.size());
+        
+        // Agregar información de debug para cada contrato
+        for (Contrato contrato : contratos) {
+            String trabajadorId = contrato.getPostulacion().getTrabajadorId();
+            String emailTrabajador = contrato.getPostulacion().getEmail();
+            System.out.println("[DEBUG] Contrato ID: " + contrato.getId() + 
+                             " - Trabajador: " + trabajadorId + 
+                             " - Email: " + emailTrabajador +
+                             " - Estado: " + contrato.getEstado());
+        }
+        
         return ResponseEntity.ok(contratos);
     }
 
     @GetMapping("/mis-contratos-empleador")
     @PreAuthorize("hasAuthority('SCOPE_access_as_user')")
     public ResponseEntity<List<Contrato>> getMisContratosEmpleador(@AuthenticationPrincipal Jwt jwt) {
-        String idUsuario = jwt.getSubject();
-        
-        // Extraer email del JWT
-        String email = null;
-        Object preferred = jwt.getClaim("preferred_username");
-        if (preferred != null) {
-            email = preferred.toString();
-        } else {
-            Object emailsObj = jwt.getClaim("emails");
-            if (emailsObj instanceof java.util.List<?> emailsList && !emailsList.isEmpty()) {
-                email = emailsList.get(0).toString();
-            }
-        }
-        
-        System.out.println("[DEBUG] idUsuario recibido en /mis-contratos-empleador: " + idUsuario);
-        System.out.println("[DEBUG] email extraído del JWT: " + email);
-        List<Contrato> contratos = contratoService.findContratosPorTrabajadorOEmpleadorOEmail(idUsuario, email);
-        System.out.println("[DEBUG] contratos encontrados como empleador: " + contratos.size());
-        return ResponseEntity.ok(contratos);
+        // Redirigir al endpoint principal para compatibilidad
+        return getMisContratos(jwt);
     }
 
     @GetMapping("/{id}")
