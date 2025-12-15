@@ -108,6 +108,7 @@ public class ContratoService {
         boolean esEmpleador = idUsuario.equals(idEmpleador);
 
         if (!esTrabajador && !esEmpleador) {
+            System.out.println("[ContratoService] Usuario sin permisos intenta rechazar contrato: idUsuario=" + idUsuario + ", emailUsuario=" + emailUsuario);
             throw new RuntimeException("No tienes permisos para rechazar este contrato.");
         }
         

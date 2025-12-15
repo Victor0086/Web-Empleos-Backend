@@ -105,22 +105,12 @@ public class ContratoController {
             }
             com.empleos.web_empleos_backend.model.Postulacion postulacion = postulacionOpt.get();
 
-            Contrato contrato = new Contrato();
-            contrato.setPostulacion(postulacion);
-            // Asignar otros campos del contrato si vienen en el body
-            if (body.containsKey("idNotario")) {
-                contrato.setIdNotario(body.get("idNotario").toString());
-            }
-            if (body.containsKey("estado")) {
-                contrato.setEstado(body.get("estado").toString());
-            }
+            // Usar el servicio existente para generar el contrato inicial
+            Contrato contrato = contratoService.generarContratoInicial(postulacion);
             
-            // Cambiar estado de la postulación a CONTRATO_GENERADO
-            postulacion.setEstado("CONTRATO_GENERADO");
-            postulacionService.save(postulacion);
-            
-            Contrato saved = contratoService.save(contrato);
-            return ResponseEntity.ok(saved);
+            return ResponseEntity.ok(contrato);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("message", "Error al crear contrato", "error", e.getMessage()));
         }

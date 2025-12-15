@@ -218,4 +218,62 @@ public class ContratoServiceTest {
         assertThrows(RuntimeException.class, () -> contratoService.rechazarContrato(1L, "trab1", "correo@correo.com"));
     }
 
+        @Test
+    void firmarContrato_empleadorFirmaDosVeces_lanzaExcepcion() {
+        Postulacion postulacion = new Postulacion();
+        postulacion.setTrabajadorId("trab1");
+        postulacion.setEmail("trab@correo.com");
+        postulacion.setOfertaId(2L);
+        Contrato contrato = new Contrato(postulacion);
+        contrato.setPostulacion(postulacion);
+        contrato.setFirmaEmpleador(LocalDateTime.now());
+        when(contratoRepository.findById(1L)).thenReturn(Optional.of(contrato));
+        var oferta = mock(com.empleos.web_empleos_backend.model.Oferta.class);
+        when(oferta.getEmpleadorId()).thenReturn("emp1");
+        when(ofertaRepository.findById(2L)).thenReturn(Optional.of(oferta));
+        assertThrows(RuntimeException.class, () -> contratoService.firmarContrato(1L, "emp1", "otro@correo.com"));
+    }
+
+    @Test
+    void firmarContrato_firmaNotario_exito() {
+        Postulacion postulacion = new Postulacion();
+        postulacion.setTrabajadorId("trab1");
+        postulacion.setEmail("trab@correo.com");
+        postulacion.setOfertaId(2L);
+        Contrato contrato = new Contrato(postulacion);
+        contrato.setPostulacion(postulacion);
+        contrato.setFirmaTrabajador(null);
+        contrato.setFirmaEmpleador(null);
+        contrato.setEstado("PENDIENTE_FIRMAS");
+        when(contratoRepository.findById(1L)).thenReturn(Optional.of(contrato));
+        var oferta = mock(com.empleos.web_empleos_backend.model.Oferta.class);
+        when(oferta.getEmpleadorId()).thenReturn("emp1");
+        when(ofertaRepository.findById(2L)).thenReturn(Optional.of(oferta));
+        when(contratoRepository.save(any(Contrato.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        String notarioId = "notario1";
+        String notarioEmail = "notario@correo.com";
+        Contrato result = contratoService.firmarContrato(1L, notarioId, notarioEmail);
+        assertNotNull(result.getFirmaNotario());
+        assertEquals(notarioId, result.getIdNotario());
+    }
+
+
+    @Test
+    void rechazarContrato_trabajadorPorEmail_exito() {
+        Postulacion postulacion = new Postulacion();
+        postulacion.setTrabajadorId("trab1");
+        postulacion.setEmail("trab@correo.com");
+        postulacion.setOfertaId(2L);
+        Contrato contrato = new Contrato(postulacion);
+        contrato.setPostulacion(postulacion);
+        contrato.setEstado("PENDIENTE_FIRMAS");
+        when(contratoRepository.findById(1L)).thenReturn(Optional.of(contrato));
+        var oferta = mock(com.empleos.web_empleos_backend.model.Oferta.class);
+        when(oferta.getEmpleadorId()).thenReturn("emp1");
+        when(ofertaRepository.findById(2L)).thenReturn(Optional.of(oferta));
+        when(contratoRepository.save(any(Contrato.class))).thenReturn(contrato);
+        // idUsuario no coincide, pero emailUsuario sí
+        contratoService.rechazarContrato(1L, "otroId", "trab@correo.com");
+        assertEquals("RECHAZADA", contrato.getEstado());
+    }
 }
