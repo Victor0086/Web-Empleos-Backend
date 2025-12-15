@@ -31,7 +31,7 @@ public class ContratoController {
     @PreAuthorize("hasAuthority('SCOPE_access_as_user')")
     public ResponseEntity<List<Contrato>> getMisContratos(@AuthenticationPrincipal Jwt jwt) {
         String idUsuario = jwt.getSubject();
-        
+
         // Extraer email del JWT
         String email = null;
         Object preferred = jwt.getClaim("preferred_username");
@@ -43,30 +43,57 @@ public class ContratoController {
                 email = emailsList.get(0).toString();
             }
         }
-        
+
         System.out.println("[DEBUG] idUsuario recibido en /mis-contratos: " + idUsuario);
         System.out.println("[DEBUG] email extraído del JWT: " + email);
-        
+
         // Obtener contratos donde soy trabajador O empleador
         List<Contrato> contratos = contratoService.findContratosPorTrabajadorOEmpleadorOEmail(idUsuario, email);
-        
+
         System.out.println("[DEBUG] contratos encontrados: " + contratos.size());
-        
+
+        // Mostrar todos los trabajador_id y empleador_id de la base para comparar
+        System.out.println("[DEBUG] === Trabajador_id y Empleador_id en la base ===");
+        contratos.forEach(contrato -> {
+            if (contrato.getPostulacion() != null) {
+                String trabajadorId = contrato.getPostulacion().getTrabajadorId();
+                String emailTrabajador = contrato.getPostulacion().getEmail();
+                Long ofertaId = contrato.getPostulacion().getOfertaId();
+                System.out.println("[DEBUG] Contrato ID: " + contrato.getId() +
+                        " - trabajador_id: " + trabajadorId +
+                        " - email_trabajador: " + emailTrabajador +
+                        " - oferta_id: " + ofertaId);
+            }
+        });
+        // Mostrar todos los empleador_id de las ofertas relacionadas
+        contratos.forEach(contrato -> {
+            if (contrato.getPostulacion() != null) {
+                Long ofertaId = contrato.getPostulacion().getOfertaId();
+                try {
+                    String empleadorId = contratoService.getEmpleadorIdByOfertaId(ofertaId);
+                    System.out.println("[DEBUG] Contrato ID: " + contrato.getId() + " - oferta_id: " + ofertaId + " - empleador_id: " + empleadorId);
+                } catch (Exception e) {
+                    System.out.println("[DEBUG] Contrato ID: " + contrato.getId() + " - oferta_id: " + ofertaId + " - empleador_id: ERROR: " + e.getMessage());
+                }
+            }
+        });
+        System.out.println("[DEBUG] === FIN Trabajador_id y Empleador_id ===");
+
         // Agregar información de debug para cada contrato
         for (Contrato contrato : contratos) {
             if (contrato.getPostulacion() != null) {
                 String trabajadorId = contrato.getPostulacion().getTrabajadorId();
                 String emailTrabajador = contrato.getPostulacion().getEmail();
-                System.out.println("[DEBUG] Contrato ID: " + contrato.getId() + 
-                                 " - Trabajador: " + trabajadorId + 
-                                 " - Email: " + emailTrabajador +
-                                 " - Estado: " + contrato.getEstado());
+                System.out.println("[DEBUG] Contrato ID: " + contrato.getId() +
+                        " - Trabajador: " + trabajadorId +
+                        " - Email: " + emailTrabajador +
+                        " - Estado: " + contrato.getEstado());
             } else {
-                System.out.println("[DEBUG] Contrato ID: " + contrato.getId() + 
-                                 " - Postulación: NULL - Estado: " + contrato.getEstado());
+                System.out.println("[DEBUG] Contrato ID: " + contrato.getId() +
+                        " - Postulación: NULL - Estado: " + contrato.getEstado());
             }
         }
-        
+
         return ResponseEntity.ok(contratos);
     }
 

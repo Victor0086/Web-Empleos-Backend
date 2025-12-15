@@ -20,6 +20,16 @@ public class ContratoService {
     @Autowired
     private OfertaRepository ofertaRepository;
 
+    @Autowired
+    private com.empleos.web_empleos_backend.repository.UsuarioRepository usuarioRepository;
+
+    // Método auxiliar para obtener el empleadorId de una oferta
+    public String getEmpleadorIdByOfertaId(Long ofertaId) {
+        return ofertaRepository.findById(ofertaId)
+                .map(oferta -> oferta.getEmpleadorId())
+                .orElse("NO_ENCONTRADO");
+    }
+
     public List<Contrato> findAll() {
         return contratoRepository.findAll();
     }
@@ -41,7 +51,18 @@ public class ContratoService {
     }
     
     public List<Contrato> findContratosPorTrabajadorOEmpleadorOEmail(String userId, String email) {
-        return contratoRepository.findContratosPorTrabajadorOEmpleadorOEmail(userId, email);
+        // Buscar el user_id correcto por email en la tabla Usuarios
+        String userIdFromDB = userId;
+        if (email != null) {
+            Optional<com.empleos.web_empleos_backend.model.Usuario> usuarioOpt = usuarioRepository.findByEmail(email);
+            if (usuarioOpt.isPresent()) {
+                userIdFromDB = usuarioOpt.get().getUserId();
+                System.out.println("[DEBUG] user_id encontrado en BD por email: " + userIdFromDB);
+            }
+        }
+        
+        System.out.println("[DEBUG] Buscando contratos con user_id: " + userIdFromDB + ", email: " + email);
+        return contratoRepository.findContratosPorTrabajadorOEmpleadorOEmail(userIdFromDB, email);
     }
 
 
