@@ -140,6 +140,14 @@ public class PostulacionController {
         return postulacionService.findByOfertaId(oferta_id);
     }
 
+    @GetMapping("/mis-postulaciones")
+    public ResponseEntity<?> getMisPostulaciones(@RequestParam("email") String email) {
+        System.out.println("[DEBUG] Obteniendo postulaciones para email: " + email);
+        var postulaciones = postulacionService.findByEmail(email);
+        System.out.println("[DEBUG] Postulaciones encontradas: " + postulaciones.size());
+        return ResponseEntity.ok().body(postulaciones);
+    }
+
     @PutMapping("/{oferta_id}/{trabajador_id}/estado")
     public ResponseEntity<?> actualizarEstado(
             @PathVariable Long oferta_id,
